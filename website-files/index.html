@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Simple Website</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Gothic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #0080FF; /* Blue color */
+            display: flex;
+            flex-direction: column; /* Arrange items vertically */
+            align-items: center; /* Center items horizontally */
+            min-height: 100vh;
+            margin: 0;
+            color: white;
+            font-family: sans-serif;
+        }
+
+        .logo-container {
+            width: 100%; /* Make the container span the full width */
+            display: flex;
+            justify-content: center; /* Center the logo horizontally within its container */
+            padding-top: 20px; /* Add some space from the top of the page */
+            padding-bottom: 20px; /* Add some space below the logo */
+        }
+
+        .logo-placeholder {
+            /* width and height can be adjusted based on your logo's dimensions */
+            /* No need for flex centering here as the parent centers it */
+            /*border: 2px dashed white; /* Just for visualization - remove later */
+        }
+
+        .logo-placeholder img {
+            max-width: 50%;
+            max-height: 50%;
+            display: block; /* To prevent extra space below inline images */
+            margin: 0 auto; /* Another way to center the image within the placeholder */
+        }
+         /* New container for the image */
+         .middle-image-container {
+            width: 80%; /* Adjust as needed */
+            max-width: 1000px; /* Optional: set a maximum width */
+            padding-top: 1px; /* Add some vertical spacing */
+            padding-bottom: 20px;
+            display: flex;
+            justify-content: center; /* Center the image horizontally */
+        }
+
+        .middle-image-placeholder {
+            /* You can add specific styling for the image placeholder here if needed */
+            /* border: 2px dashed white; /* For visualization */
+            width: 100%; /* Make the placeholder take the width of its container */
+            text-align: center; /* Center the image if it doesn't fill the container */
+        }
+
+        .middle-image-placeholder img {
+            max-width: 100%; /* Ensure the image doesn't exceed the container width */
+            height: auto; /* Maintain aspect ratio */
+            display: block; /* Prevent extra bottom spacing */
+            margin: 0 auto; /* Center the image within the placeholder */
+        }
+
+        .text-placeholder {
+            text-align: center;
+            padding: 20px;
+            margin-top: 50px; /* Add space between the logo and text */
+            font-family: 'Special Gothic', serif ;
+            font-size: 3em; /* Make the text larger (2 times the default size) */
+            font-weight: bold; /* Make the text bold */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Add a subtle text shadow */
+
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <div class="logo-placeholder">
+            <img src="do-logo.png" >
+        </div>
+    </div>
+
+    <div class="middle-image-container">
+        <div class="middle-image-placeholder">
+            <img src="do-kube-image.png" alt="Middle Image">
+            </div>
+    </div>
+
+    <div class="text-placeholder">
+        Demo - Static Website Hosting on Managed Kubernetes Cluster
+    </div>
+</body>
+</html>
