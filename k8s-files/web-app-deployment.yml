@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: website-deployment # Name of the Deplotment
+  labels:
+    app: web-app # Label for the deployment
+spec:
+  replicas: 2 # Set the number of replicas to 2
+  selector:
+    matchLabels:
+      app: web-app # For replication PODs with this label will be targeted
+  template:
+    metadata:
+      labels:
+        app: web-app # Label for the Pod
+    spec:
+      containers:
+        - name: website-pod # Name of the Pods
+          image: vinayti/simple-website-demo # Replace with your application's image
+          ports:
+            - containerPort: 80 # Port on which the container application will be listening
+          resources: # Define resource requests and limits
+            requests:  # bare minimum limits
+              cpu: "100m" # 100 milliCPUs (0.1 CPU)
+              memory: "128Mi" # 128 Mebibytes of memory
+            limits: # bare maximum limits
+              cpu: "500m" # 500 milliCPUs (0.5 CPU)
+              memory: "512Mi" # 512 Mebibytes of memory

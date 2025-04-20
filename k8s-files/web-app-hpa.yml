@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: website-hpa
+spec:
+  scaleTargetRef: # Specifies the target resource to scale
+    apiVersion: apps/v1
+    kind: Deployment
+    name: website-deployment # Name of the Deployment to scale
+  minReplicas: 2 # Minimum number of replicas
+  maxReplicas: 10 # Maximum number of replicas
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50 # Target CPU utilization percentage
