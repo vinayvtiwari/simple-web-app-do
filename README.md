@@ -151,6 +151,17 @@ The image should now be visible in the docker hub under your account. It can now
 
 - Login to DigitalOcean [here](https://cloud.digitalocean.com/login)
 
+- Click Create Button on top right and select Kubernetes.
+
   ![image](https://github.com/user-attachments/assets/122a739d-9302-4d02-9de7-4e125cc2dd58)
+
+- Select the latest version. Select appropriate datacenter region & keep the VPC Setting as is.
+
+  ![image](https://github.com/user-attachments/assets/726e0271-49b4-4648-b0ee-d0c7bc225252)
+
+
+  
+
+- 
 
 
