@@ -60,9 +60,9 @@ total 140
 -rw-rw-r-- 1 vinayti vinayti   3839 Apr 20 10:27 index.html
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
-Except Dockerfile , all the remaining files are website related files which is what we want to dockerize. Lets understand it first.
+Except Dockerfile , all the remaining files are website related which is what we want to dockerize. Lets understand it first.
 
-Dockerfile --> A Dockerfile is a text file that contains instructions for building a Docker image. It's a blueprint for creating a Docker image, specifying the base image, dependencies, and commands to run.
+Dockerfile --> A Dockerfile is a text file that contains instructions for building a Docker image. It's a blueprint for creating a Docker image, specifying  the base image, dependencies, and commands to run.
 
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ cat Dockerfile
@@ -83,7 +83,7 @@ COPY index.html do-kube-image.png do-logo.png /usr/share/nginx/html
 Copies index.html, do-kube-image.png, and do-logo.png files from the current directory (on the ubuntu machine) into the Docker image
 
 
-- **Building our own image**
+- **Building our own image**  
 We did not specify the docker file, because the .(dot) at the end means, the Dockerfile is in the current folder. we using the name in the format of **[DOCKER_USERNAME/IMAGE_NAME_YOU_WANT_TO_KEEP]**. It is required because next we will also push it to the dockerhub  so that it can be dowloaded and utilized within the kubernetes environment.
 
 ```shell
@@ -109,7 +109,7 @@ vinayti@osboxes:/home/vinayti/website-files# docker build -t vinayti/simple-webs
  => => naming to docker.io/vinayti/simple-website-demo                                         0.0s
 vinaytit@osboxes:/home/vinayti/website-files#
 ```
-- ** Check whether the image is build using the below docker command**
+- **Check whether the image is build using the below docker command**
 
 ```shell
 sudo docker images
@@ -176,13 +176,13 @@ The image should now be visible in the docker hub under your account. It can now
 
 # Step 03 - Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)
 
-- Login to DigitalOcean [here](https://cloud.digitalocean.com/login)
+- **Login to DigitalOcean [here](https://cloud.digitalocean.com/login)**
 
-- Click Create Button on top right and select Kubernetes.
-
+- **Click Create Button on top right and select Kubernetes.**
+  
   ![image](https://github.com/user-attachments/assets/122a739d-9302-4d02-9de7-4e125cc2dd58)
 
-- Select the latest version. Select appropriate datacenter region & keep the VPC Setting as is.
+- **Select the latest version. Select appropriate datacenter region & keep the VPC Setting as is.**
 
   ![image](https://github.com/user-attachments/assets/726e0271-49b4-4648-b0ee-d0c7bc225252)
 
@@ -190,15 +190,15 @@ The image should now be visible in the docker hub under your account. It can now
 
   ![image](https://github.com/user-attachments/assets/51660cce-cd07-4fcb-a926-86cc25b1c61d)
 
-- Under Finalize section, provide a name for your cluster or leave it at default. Click Create Cluster.
+- **Under Finalize section, provide a name for your cluster or leave it at default. Click Create Cluster.**
   
 ![image](https://github.com/user-attachments/assets/6a741582-2d9d-4248-80ed-90a9d16af748)
 
-- After some time (5-10min) , Along with the Cluster, you will also see your two nodes also up and running.
+- **After some time (5-10min), Along with the Cluster, you will also see your two nodes also up and running.**
 
 ![image](https://github.com/user-attachments/assets/3644f373-281f-471d-85c8-12570b396e99)
 
-- Under the section "Connecting and managing this cluster". make a note of the below command, where the long string at the end is the cluster id. For security reason, i have provided a wrong id. 
+- **Under the section "Connecting and managing this cluster". make a note of the below command, where the long string at the end is the cluster id. For security reason, i have provided a wrong id.** 
 
 ```shell
 doctl kubernetes cluster kubeconfig save <cluster id from the Digital Ocean Control Panel>
@@ -210,11 +210,11 @@ doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
 ```
 ![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
 
-Kubernetes Cluster is now ready to run your own container images.
+**Kubernetes Cluster is now ready to run your own container images.**
 
 # Step 04 - Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)
 
-- This step is required to connect the local linux instance to DOs kubernetes cluster. Run the below command.
+- **This step is required to connect the local linux instance to DOs kubernetes cluster. Run the below command.**
 
 ```shell
 sudo snap install doctl
@@ -226,7 +226,7 @@ doctl v1.124.0 from DigitalOcean✓ installed
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 
-- Grant additional permission to doctl to integrate with kubectl.
+- **Grant additional permission to doctl to integrate with kubectl.**
 
 ```shell
 sudo snap connect doctl:kube-config
@@ -236,23 +236,23 @@ output:
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap connect doctl:kube-config
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
-- create a API Token from the DigitalOcean Control Panel. On the left hand panel, select API
+- **create a API Token from the DigitalOcean Control Panel. On the left hand panel, select API**
 
 ![image](https://github.com/user-attachments/assets/9e38c30d-d1ae-4b4d-a56b-1bd3bf3c214c)
 
-- Click on generate new token.
+- **Click on generate new token.**
 
 ![image](https://github.com/user-attachments/assets/1d202f72-d1a0-4c7e-a2b1-0b7764d21373)
 
-- Give a meaningful name. Also select the expiry period. For simplicty. under scope, select full access. Click generate token
+- **Give a meaningful name. Also select the expiry period. For simplicty. under scope, select full access. Click generate token**
 
 ![image](https://github.com/user-attachments/assets/67a1b4aa-29df-441b-9171-da8193eba729)
 
-- Copy the token and keep it in a notepad. We will need this to authenticate doctl.
+- **Copy the token and keep it in a notepad. We will need this to authenticate doctl.**
 
 ![image](https://github.com/user-attachments/assets/9ecbe2fc-538c-4ba9-9f8d-43bcc053a50e)
 
-- Use the API token to grant doctl access to your DigitalOcean account. Pass in the token string when prompted by doctl auth init, and give this authentication context a name.
+- **Use the API token to grant doctl access to your DigitalOcean account. Pass in the token string when prompted by doctl auth init, and give this authentication context a name.**
 
 ```shell
 doctl auth init
@@ -271,7 +271,7 @@ User Email                    Team       Droplet Limit    Email Verified    User
 vinayvinodtiwari@gmail.com    My Team    10               true              c93d21dc-47f3-409a-8d19-64ea0b64eccb    active
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
-- To install kubectl , follow the document [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management)
+- **To install kubectl , follow the document [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management)**
 
 output:
 ```shell
@@ -312,7 +312,7 @@ Unpacking kubectl (1.32.3-1.1) ...
 Setting up kubectl (1.32.3-1.1) ...
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
-- Set the kubectl context to point to DOs cluster. Please note that the clusterid i am using is wrong. Please use the one you see on the control manager. Also run the get nodes command as shown below, the output will confirm that you are now connected.
+- **Set the kubectl context to point to DOs cluster. Please note that the clusterid i am using is wrong. Please use the one you see on the control manager. Also run the get nodes command as shown below, the output will confirm that you are now connected.**
 
 ```shell
 doctl kubernetes cluster kubeconfig save <your cluster id>
@@ -333,7 +333,7 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 # Step 05 - Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type
 
-- Before proceeding further, lets understand some basic concept of Kubernetes.
+- **Before proceeding further, lets understand some basic concept of Kubernetes.**
 
 PODs: In Kubernetes, a Pod is the smallest and most basic execution unit that can be created and managed. It's a logical host for one or more containers. The container image that we created and uploaded to docker hub will run in the POD.
 
@@ -345,7 +345,7 @@ Deployment: Kubernetes Deployments manage the rollout of new versions or configu
 
 Load Balancer Service Type: In Kubernetes, a LoadBalancer service type exposes a service to the outside world by provisioning a load balancer from a cloud provider. In our case, it is DigitalOcean.
 
-- Within the git cloned repository, there is another folder called k8s-files. CD into it
+- **Within the git cloned repository, there is another folder called k8s-files. cd into it**
 
 output:
 ```shell
@@ -354,7 +354,7 @@ vinayti@osboxes:~/simple-web-app-do/k8s-files$ ls
 web-app-deployment.yml  web-app-hpa.yml  web-app-service.yml
 vinayti@osboxes:~/simple-web-app-do/k8s-files$
 ```
-- These files are very well commented for anyone to understand the meaning of the lines. Lets use the kubectl create commands to deploy the resources.  In the below output, we can see that the PODs are deployed on seperate nodes. Kubernetes has a component called scheduler which takes care of the placement of the nodes, making sure they are placed on different nodes for resiliency. The count is 2, because in th file web-app-deployment.yaml, we have defined replica setting at 2.
+These files are very well commented for anyone to understand the meaning of the lines. Lets use the kubectl create commands to deploy the resources.  In the below output, we can see that the PODs are deployed on seperate nodes. Kubernetes has a component called scheduler which takes care of the placement of the nodes, making sure they are placed on different nodes for resiliency. The count is 2, because in th file web-app-deployment.yaml, we have defined replica setting at 2.
 
 ```shell
 kubectl create -f web-app-deployment.yaml
@@ -373,7 +373,7 @@ website-deployment-847f9949b-mk8q2   1/1     Running   0          87s   10.108.0
 
 vinayti@osboxes:~/k8s-files$
 ```
-- As the PODs are running, lets now make it public facing by deploying a load balancer service. In the below output, we are asking DigitalOcean to deploy a load balancer. This load balancer will serve the application running on PODs to the outside world. If you notice, the External IP section for the LoadBalancer Service type is pending. It will appear once the load balancer is deployed within the DigitalOcean Account. 
+As the PODs are running, lets now make it public facing by deploying a load balancer service. In the below output, we are asking DigitalOcean to deploy a load balancer. This load balancer will serve the application running on PODs to the outside world. If you notice, the External IP section for the LoadBalancer Service type is pending. It will appear once the load balancer is deployed within the DigitalOcean Account. 
 
 ```shell
 kubectl create -f web-app-service.yml
@@ -395,11 +395,11 @@ kubernetes        ClusterIP      10.109.0.1      <none>                         
 website-service   LoadBalancer   10.109.13.213   134.199.177.228,2604:a880:400:d1:0:1:7f21:2001   80:30348/TCP   2m34s
 ```
 
-- You can now match the IP address in the LoadBalance External IP section with the Load Balancer IP in Digital Oceans control panel.
+- **You can now match the IP address in the LoadBalance External IP section with the Load Balancer IP in Digital Oceans control panel.**
 
 ![Screenshot 2025-04-20 145214](https://github.com/user-attachments/assets/1515c585-e11e-4b24-90bc-23926c29f1f7)
 
-- Using the Load Balancer IP, you can now browse the Website we deployed on the POD.
+- **Using the Load Balancer IP, you can now browse the Website we deployed on the POD.**
 
 ![image](https://github.com/user-attachments/assets/6d01a801-950e-4110-8b01-0b3349005710)
 
@@ -407,7 +407,7 @@ website-service   LoadBalancer   10.109.13.213   134.199.177.228,2604:a880:400:d
 
 Kubernetes Metrics Server: It provides essential metrics for Kubernetes clusters, enabling better resource management and scaling decisions. As per the latest Kubernetes Version, it is not a part of the Kubernetes Package. Having said that, we will install it manually. It can also be deployed via definition file. The file is not included in this repo, to make sure, we always get the latest version. 
 
-- Run the below commnad to download the metric server.
+- **Run the below commnad to download the metric server.**
 
 ```shell
 wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
@@ -420,7 +420,7 @@ Resolving github.com (github.com)... 20.207.73.82
 Connecting to github.com (github.com)|20.207.73.82|:443... connected.
 2025-04-20 05:33:10 (13.4 MB/s) - ‘components.yaml’ saved [4307/4307]
 ```
-- Run the below commnad to install the metric server.
+- **Run the below commnad to install the metric server.**
 
 ```shell
  kubectl create -f components.yaml
@@ -438,7 +438,7 @@ service/metrics-server created
 deployment.apps/metrics-server created
 apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io created
 ```
-- In few minutes, we shoud see metrics server capturing the nodes as well as pods metrics.
+- **In few minutes, we shoud see metrics server capturing the nodes as well as pods metrics.**
 
 ```shell
  kubectl top node; kubectl top pods
@@ -460,9 +460,9 @@ website-deployment-847f9949b-mk8q2   0m           3Mi
 
 # Step 07 - Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
 
-- Horizontal POD Autoscaler: In earlier steps, we talked about replica which spins up the defined number of PODs, however, it is static. In case the load increases or decreases, we cannnot modify the replica count again and again. We need a mechanism, which can look at the current load and accordingly scale up or scale down the number of PODs. This is where HPA comes handy. Horizontal Pod Autoscaling (HPA) automatically scales the number of replicas of a pod based on observed CPU utilization or other custom metrics. Inour example, it gets the metrics from the metric server, we deployed in the last step.
+Horizontal POD Autoscaler: In earlier steps, we talked about replica which spins up the defined number of PODs, however, it is static. In case the load increases or decreases, we cannnot modify the replica count again and again. We need a mechanism, which can look at the current load and accordingly scale up or scale down the number of PODs. This is where HPA comes handy. Horizontal Pod Autoscaling (HPA) automatically scales the number of replicas of a pod based on observed CPU utilization or other custom metrics. Inour example, it gets the metrics from the metric server, we deployed in the last step.
 
-- There is another YAML file in the k8s-files folder web-app-hpa. Lets use it to deploy the (HPA).
+- **There is another YAML file in the k8s-files folder web-app-hpa. Lets use it to deploy the (HPA).**
 
 ```shell
  kubectl create -f web-app-hpa.yaml
@@ -474,7 +474,7 @@ vinayti@osboxes:~/k8s-files$ kubectl create -f web-app-hpa.yaml
 horizontalpodautoscaler.autoscaling/website-hpa created
 ```
 
-- lets check the stats of the HPA.
+- **lets check the stats of the HPA.**
 
 ```shell
  kubectl get hpa
