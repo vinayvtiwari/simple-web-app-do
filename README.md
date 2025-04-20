@@ -20,8 +20,9 @@ Containerize & Deploy a static website on DigitalOcean's managed Kubernetes clus
 03. Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)
 04. Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)
 05. Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type
-07. Monitoring Your Cluster: Installing Metrics Server on DOKS
-08. Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
+06. Monitoring Your Cluster: Installing Metrics Server on DOKS
+07. Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
+08. Architechture Diagram Depicting the above configuration
 
 # Step 01 - Static Website Containerization with Docker
 
@@ -113,7 +114,7 @@ vinaytit@osboxes:/home/vinayti/website-files#
 ```shell
 sudo docker images
 ```
-Output:
+output:
 ```shell
 
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo docker images
@@ -218,7 +219,6 @@ Kubernetes Cluster is now ready to run your own container images.
 ```shell
 sudo snap install doctl
 ```
-
 output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap install doctl
@@ -231,7 +231,6 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 ```shell
 sudo snap connect doctl:kube-config
 ```
-
 output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap connect doctl:kube-config
@@ -258,7 +257,6 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 ```shell
 doctl auth init
 ```
-
 output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ doctl auth init
@@ -274,7 +272,8 @@ vinayvinodtiwari@gmail.com    My Team    10               true              c93d
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 - To install kubectl , follow the document [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management)
-```
+
+output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
@@ -314,8 +313,12 @@ Setting up kubectl (1.32.3-1.1) ...
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 - Set the kubectl context to point to DOs cluster. Please note that the clusterid i am using is wrong. Please use the one you see on the control manager. Also run the get nodes command as shown below, the output will confirm that you are now connected.
-```shell  
 
+```shell
+doctl kubernetes cluster kubeconfig save <your cluster id>
+```
+output:
+```shell  
 vinayti@osboxes:~/simple-web-app-do/website-files$ doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
 Notice: Adding cluster credentials to kubeconfig file found in "/home/vinayti/.kube/config"
 Notice: Setting current-context to do-nyc1-vinayti-k8s-cluster01
@@ -330,7 +333,7 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 # Step 05 - Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type
 
-- Before proceedin further, lets understand some basic concept of Kubernetes.
+- Before proceeding further, lets understand some basic concept of Kubernetes.
 
 PODs: In Kubernetes, a Pod is the smallest and most basic execution unit that can be created and managed. It's a logical host for one or more containers. The container image that we created and uploaded to docker hub will run in the POD.
 
@@ -344,6 +347,7 @@ Load Balancer Service Type: In Kubernetes, a LoadBalancer service type exposes a
 
 - Within the git cloned repository, there is another folder called k8s-files. CD into it
 
+output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do$ cd k8s-files/
 vinayti@osboxes:~/simple-web-app-do/k8s-files$ ls
@@ -352,6 +356,13 @@ vinayti@osboxes:~/simple-web-app-do/k8s-files$
 ```
 - These files are very well commented for anyone to understand the meaning of the lines. Lets use the kubectl create commands to deploy the resources.  In the below output, we can see that the PODs are deployed on seperate nodes. Kubernetes has a component called scheduler which takes care of the placement of the nodes, making sure they are placed on different nodes for resiliency. The count is 2, because in th file web-app-deployment.yaml, we have defined replica setting at 2.
 
+```shell
+kubectl create -f web-app-deployment.yaml
+```
+```shell
+kubectl get pods -o wide
+```
+output:
 ```shell
 vinayti@osboxes:~/k8s-files$ kubectl create -f web-app-deployment.yaml
 deployment.apps/website-deployment created
@@ -364,7 +375,14 @@ vinayti@osboxes:~/k8s-files$
 ```
 - As the PODs are running, lets now make it public facing by deploying a load balancer service. In the below output, we are asking DigitalOcean to deploy a load balancer. This load balancer will serve the application running on PODs to the outside world. If you notice, the External IP section for the LoadBalancer Service type is pending. It will appear once the load balancer is deployed within the DigitalOcean Account. 
 
+```shell
+kubectl create -f web-app-service.yml
 ```
+```shell
+kubectl get svc
+```
+output:
+```shell
 vinayti@osboxes:~/k8s-files$ kubectl create -f web-app-service.yml
 service/website-service created
 vinayti@osboxes:~/k8s-files$ kubectl get svc
@@ -467,10 +485,9 @@ vinayti@osboxes:~/k8s-files$ kubectl get hpa
 NAME          REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
 website-hpa   Deployment/website-deployment   cpu: 0%/50%   2         10        2          18s
 ```
+The above output means, that the HPA will monitor CPU percentage of the PODs, and if reached 50%, it will scale the number of pods. The maximum scale size is 10. Once the load decreases. it can scale down to a minimum of 2. Also, the current CPU usage of the PODs is 0%
 
-
-
-
+# Step 08 - Architechture Diagram Depicting the above configuration
 
 
 
