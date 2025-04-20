@@ -208,7 +208,7 @@ output:
 ```shell
 doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
 ```
-  ![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
+   ![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
 
 **Kubernetes Cluster is now ready to run your own container images.**
 
