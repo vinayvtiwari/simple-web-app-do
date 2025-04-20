@@ -192,11 +192,11 @@ The image should now be visible in the docker hub under your account. It can now
 
 - **Under Finalize section, provide a name for your cluster or leave it at default. Click Create Cluster.**
   
-![image](https://github.com/user-attachments/assets/6a741582-2d9d-4248-80ed-90a9d16af748)
+  ![image](https://github.com/user-attachments/assets/6a741582-2d9d-4248-80ed-90a9d16af748)
 
 - **After some time (5-10min), Along with the Cluster, you will also see your two nodes also up and running.**
 
-![image](https://github.com/user-attachments/assets/3644f373-281f-471d-85c8-12570b396e99)
+  ![image](https://github.com/user-attachments/assets/3644f373-281f-471d-85c8-12570b396e99)
 
 - **Under the section "Connecting and managing this cluster". make a note of the below command, where the long string at the end is the cluster id. For security reason, i have provided a wrong id.** 
 
@@ -208,7 +208,7 @@ output:
 ```shell
 doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
 ```
-![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
+  ![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
 
 **Kubernetes Cluster is now ready to run your own container images.**
 
@@ -238,19 +238,19 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 - **create a API Token from the DigitalOcean Control Panel. On the left hand panel, select API**
 
-![image](https://github.com/user-attachments/assets/9e38c30d-d1ae-4b4d-a56b-1bd3bf3c214c)
+  ![image](https://github.com/user-attachments/assets/9e38c30d-d1ae-4b4d-a56b-1bd3bf3c214c)
 
 - **Click on generate new token.**
 
-![image](https://github.com/user-attachments/assets/1d202f72-d1a0-4c7e-a2b1-0b7764d21373)
+  ![image](https://github.com/user-attachments/assets/1d202f72-d1a0-4c7e-a2b1-0b7764d21373)
 
 - **Give a meaningful name. Also select the expiry period. For simplicty. under scope, select full access. Click generate token**
 
-![image](https://github.com/user-attachments/assets/67a1b4aa-29df-441b-9171-da8193eba729)
+  ![image](https://github.com/user-attachments/assets/67a1b4aa-29df-441b-9171-da8193eba729)
 
 - **Copy the token and keep it in a notepad. We will need this to authenticate doctl.**
 
-![image](https://github.com/user-attachments/assets/9ecbe2fc-538c-4ba9-9f8d-43bcc053a50e)
+  ![image](https://github.com/user-attachments/assets/9ecbe2fc-538c-4ba9-9f8d-43bcc053a50e)
 
 - **Use the API token to grant doctl access to your DigitalOcean account. Pass in the token string when prompted by doctl auth init, and give this authentication context a name.**
 
@@ -397,11 +397,11 @@ website-service   LoadBalancer   10.109.13.213   134.199.177.228,2604:a880:400:d
 
 - **You can now match the IP address in the LoadBalance External IP section with the Load Balancer IP in Digital Oceans control panel.**
 
-![Screenshot 2025-04-20 145214](https://github.com/user-attachments/assets/1515c585-e11e-4b24-90bc-23926c29f1f7)
+  ![Screenshot 2025-04-20 145214](https://github.com/user-attachments/assets/1515c585-e11e-4b24-90bc-23926c29f1f7)
 
 - **Using the Load Balancer IP, you can now browse the Website we deployed on the POD.**
 
-![image](https://github.com/user-attachments/assets/6d01a801-950e-4110-8b01-0b3349005710)
+  ![image](https://github.com/user-attachments/assets/6d01a801-950e-4110-8b01-0b3349005710)
 
 # Step 06 - Monitoring Your Cluster: Installing Metrics Server on DOKS
 
