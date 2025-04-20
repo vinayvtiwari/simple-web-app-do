@@ -10,6 +10,7 @@ Containerize & Deploy a static website on DigitalOcean's managed Kubernetes clus
  - DockerHub id. if not already, please refer [here](https://docs.docker.com/accounts/create-account/)
  - git client installed
  - static website files. Feel free to use to sample in this repo [website-files](https://github.com/vinayvtiwari/simple-web-app-do/tree/main/website-files)
+ - DigitalOcean login id with relevant permissions.
 
 
 # Table of Content
@@ -147,4 +148,9 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 The image should now be visible in the docker hub under your account. It can now be utilized by anyone on the internet
 
 # Step 03 - Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)
+
+- Login to DigitalOcean [here](https://cloud.digitalocean.com/login)
+
+  ![image](https://github.com/user-attachments/assets/122a739d-9302-4d02-9de7-4e125cc2dd58)
+
 
