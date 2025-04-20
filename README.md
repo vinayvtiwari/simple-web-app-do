@@ -490,6 +490,8 @@ The above output means, that the HPA will monitor CPU percentage of the PODs, an
 # Step 08 - Architechture Diagram Depicting the above configuration
 
 
+![image](https://github.com/user-attachments/assets/870333f8-1050-4fc1-8b05-8613d3dfd09b)
+
 
 
 
