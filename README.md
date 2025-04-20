@@ -18,8 +18,8 @@ Containerize & Deploy a static website on DigitalOcean's managed Kubernetes clus
 01. Static Website Containerization with Docker
 02. Publishing Your Docker Image to Docker Hub
 03. Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)
-04. Install & configure Digital Ocean CLI(DOCTL) & Kubernetes CLI (Kubectl)
-05. Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Deployments, and LoadBalancer Service Type
+04. Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)
+05. Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type
 07. Monitoring Your Cluster: Installing Metrics Server on DOKS
 08. Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
 
@@ -159,9 +159,187 @@ The image should now be visible in the docker hub under your account. It can now
 
   ![image](https://github.com/user-attachments/assets/726e0271-49b4-4648-b0ee-d0c7bc225252)
 
+- Under Cluster Capacity, Provide a Node pool name and change number of Nodes to 2. There is "Set Node Pool to Autoscale" which will increase the number on Nodes, based on utilization. There is also a high avaialbility option for controlplane, which will run control plane components in HA mode. Because this is not production we will keep them unchecked.
 
+  ![image](https://github.com/user-attachments/assets/51660cce-cd07-4fcb-a926-86cc25b1c61d)
+
+- Under Finalize section, provide a name for your cluster or leave it at default. Click Create Cluster.
   
+![image](https://github.com/user-attachments/assets/6a741582-2d9d-4248-80ed-90a9d16af748)
 
-- 
+- After some time (5-10min) , Along with the Cluster, you will also see your two nodes also up and running.
+
+![image](https://github.com/user-attachments/assets/3644f373-281f-471d-85c8-12570b396e99)
+
+- Under the section "Connecting and managing this cluster". make a note of the below command, where the long string at the end is the cluster id. For security reason, i have provided a wrong id. 
+
+```shell
+doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
+```
+![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
+
+Kubernetes Cluster is now ready to host your own container images.
+
+# Step 04 - Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)
+
+- This step is required to connect the local linux instance to DOs kubernetes cluster. Run the below command.
+
+```shell
+vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap install doctl
+doctl v1.124.0 from DigitalOcean✓ installed
+vinayti@osboxes:~/simple-web-app-do/website-files$
+```
+- Grant additional permission to doctl to integrate with kubectl.
+```shell
+vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap connect doctl:kube-config
+vinayti@osboxes:~/simple-web-app-do/website-files$
+```
+- create a API Token from the DigitalOcean Control Panel. On the left hand panel, select API
+
+![image](https://github.com/user-attachments/assets/9e38c30d-d1ae-4b4d-a56b-1bd3bf3c214c)
+
+- Click on generate new token.
+
+![image](https://github.com/user-attachments/assets/1d202f72-d1a0-4c7e-a2b1-0b7764d21373)
+
+- Give a meaningful name. Also select the expiry period. For simplicty. under scope, select full access. Click generate token
+
+![image](https://github.com/user-attachments/assets/67a1b4aa-29df-441b-9171-da8193eba729)
+
+- Copy the token and keep it in a notepad. We will need this to authenticate doctl.
+
+![image](https://github.com/user-attachments/assets/9ecbe2fc-538c-4ba9-9f8d-43bcc053a50e)
+
+- Use the API token to grant doctl access to your DigitalOcean account. Pass in the token string when prompted by doctl auth init, and give this authentication context a name.
+
+```shell
+vinayti@osboxes:~/simple-web-app-do/website-files$ doctl auth init
+Please authenticate doctl for use with your DigitalOcean account. You can generate a token in the control panel at https://cloud.digitalocean.com/account/api/tokens
+
+❯ Enter your access token:  ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
+
+Validating token... ✔
+
+vinayti@osboxes:~/simple-web-app-do/website-files$ doctl account get
+User Email                    Team       Droplet Limit    Email Verified    User UUID                               Status
+vinayvinodtiwari@gmail.com    My Team    10               true              c93d21dc-47f3-409a-8d19-64ea0b64eccb    active
+vinayti@osboxes:~/simple-web-app-do/website-files$
+```
+- To install kubectl , follow the document [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management)
+
+```shell
+vinayti@osboxes:~/simple-web-app-do/website-files$ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
+vinayti@osboxes:~/simple-web-app-do/website-files$ sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
+vinayti@osboxes:~/simple-web-app-do/website-files$ echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list   # helps tools such as command-not-found to work correctly
+deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /
+vinayti@osboxes:~/simple-web-app-do/website-files$ sudo apt-get update
+Hit:1 http://security.ubuntu.com/ubuntu oracular-security InRelease
+Hit:2 https://download.docker.com/linux/ubuntu oracular InRelease
+Hit:3 http://archive.ubuntu.com/ubuntu oracular InRelease
+Hit:5 http://archive.ubuntu.com/ubuntu oracular-updates InRelease
+Hit:6 http://archive.ubuntu.com/ubuntu oracular-backports InRelease
+Get:4 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.32/deb  InRelease [1,186 B]
+Get:7 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.32/deb  Packages [6,406 B]
+Fetched 7,592 B in 5s (1,508 B/s)
+Reading package lists... Done
+vinayti@osboxes:~/simple-web-app-do/website-files$ sudo apt-get install -y kubectl
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following package was automatically installed and is no longer required:
+  python3-netifaces
+Use 'sudo apt autoremove' to remove it.
+The following NEW packages will be installed:
+  kubectl
+0 upgraded, 1 newly installed, 0 to remove and 95 not upgraded.
+Need to get 11.2 MB of archives.
+After this operation, 57.4 MB of additional disk space will be used.
+Get:1 https://prod-cdn.packages.k8s.io/repositories/isv:/kubernetes:/core:/stable:/v1.32/deb  kubectl 1.32.3-1.1 [11.2 MB]
+Fetched 11.2 MB in 2s (6,647 kB/s)
+Selecting previously unselected package kubectl.
+(Reading database ... 156760 files and directories currently installed.)
+Preparing to unpack .../kubectl_1.32.3-1.1_amd64.deb ...
+Unpacking kubectl (1.32.3-1.1) ...
+Setting up kubectl (1.32.3-1.1) ...
+vinayti@osboxes:~/simple-web-app-do/website-files$
+```
+- Set the kubectl context to point to DOs cluster. Please note that the clusterid i am using is wrong. Please use the one you see on the control manager. Also run the get nodes command as shown below, the output will confirm that you are now connected.
+```shell  
+
+vinayti@osboxes:~/simple-web-app-do/website-files$ doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
+Notice: Adding cluster credentials to kubeconfig file found in "/home/vinayti/.kube/config"
+Notice: Setting current-context to do-nyc1-vinayti-k8s-cluster01
+vinayti@osboxes:~/simple-web-app-do/website-files$
+vinayti@osboxes:~/simple-web-app-do/website-files$
+vinayti@osboxes:~/simple-web-app-do/website-files$ kubectl get nodes
+NAME                STATUS   ROLES    AGE   VERSION
+node-pool01-6hce7   Ready    <none>   8h    v1.32.2
+node-pool01-6hcem   Ready    <none>   8h    v1.32.2
+vinayti@osboxes:~/simple-web-app-do/website-files$
+
+```
+# Step 05 - Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type
+
+- Before proceedin further, lets understand some basic concept of Kubernetes.
+
+PODs: In Kubernetes, a Pod is the smallest and most basic execution unit that can be created and managed. It's a logical host for one or more containers. The container image that we created and uploaded to docker hub will run in the POD.
+
+ReplicaSets: A Kubernetes ReplicaSet (RS) ensures a specified number of replicas (identical Pods) are running at any given time. It's a way to maintain a desired state for an application. This makes sure that the define number of pods are always running.
+
+Declarative Definitions: Declarative definitions in Kubernetes often use YAML files to define resources.  These YAML files specify the desired state of resources like Pods, ReplicaSets, Deployments, and more.
+
+Deployment: Kubernetes Deployments manage the rollout of new versions or configurations of an application. They provide a declarative way to describe the desired state of an application. Within a deployment, we can define the PODs, Replica Set, and many more.
+
+Load Balancer Service Type: In Kubernetes, a LoadBalancer service type exposes a service to the outside world by provisioning a load balancer from a cloud provider. In our case, it is DigitalOcean.
+
+- Within the git cloned repository, there is another folder called k8s-files. CD into it
+
+```shell
+vinayti@osboxes:~/simple-web-app-do$ cd k8s-files/
+vinayti@osboxes:~/simple-web-app-do/k8s-files$ ls
+web-app-deployment.yml  web-app-hpa.yml  web-app-service.yml
+vinayti@osboxes:~/simple-web-app-do/k8s-files$
+```
+- These files are very well commented for anyone to understand the meaning of the lines. Lets use the kubectl create commands to deploy the resources.  In the below output, we can see that the PODs are deployed on seperate nodes. Kubernetes has a component called scheduler which takes care of the placement of the nodes, making sure they are placed on different nodes for resiliency. The count is 2, because in th file web-app-deployment.yaml, we have defined replica setting at 2.
+
+```shell
+vinayti@osboxes:~/k8s-files$ kubectl create -f web-app-deployment.yaml
+deployment.apps/website-deployment created
+vinayti@osboxes:~/k8s-files$ kubectl get pods -o wide
+NAME                                 READY   STATUS    RESTARTS   AGE   IP             NODE                NOMINATED NODE   READINESS GATES
+website-deployment-847f9949b-c9477   1/1     Running   0          87s   10.108.0.184   node-pool01-6hcem   <none>           <none>
+website-deployment-847f9949b-mk8q2   1/1     Running   0          87s   10.108.0.54    node-pool01-6hce7   <none>           <none>
+
+vinayti@osboxes:~/k8s-files$
+```
+- As the PODs are running, lets now make it public facing by deploying a load balancer service. In the below output, we are asking DigitalOcean to deploy a load balancer. This load balancer will serve the application running on PODs to the outside world. If you notice, the External IP section for the LoadBalancer Service type is pending. It will appear once the load balancer is deployed within the DigitalOcean Account. 
+
+```
+vinayti@osboxes:~/k8s-files$ kubectl create -f web-app-service.yml
+service/website-service created
+vinayti@osboxes:~/k8s-files$ kubectl get svc
+NAME              TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+kubernetes        ClusterIP      10.109.0.1      <none>        443/TCP        25m
+website-service   LoadBalancer   10.109.13.213   <pending>     80:30348/TCP   4s
+vinayti@osboxes:~/k8s-files$ kubectl get svc
+NAME              TYPE           CLUSTER-IP      EXTERNAL-IP                                      PORT(S)        AGE
+kubernetes        ClusterIP      10.109.0.1      <none>                                           443/TCP        28m
+website-service   LoadBalancer   10.109.13.213   134.199.177.228,2604:a880:400:d1:0:1:7f21:2001   80:30348/TCP   2m34s
+```
+
+- You can now match the IP address in the LoadBalance External IP section with the Load Balancer IP in Digital Oceans control panel.
+
+![Screenshot 2025-04-20 145214](https://github.com/user-attachments/assets/1515c585-e11e-4b24-90bc-23926c29f1f7)
+
+- Using the Load Balancer IP, you can now browse the Website we deployed on the POD.
+
+![image](https://github.com/user-attachments/assets/6d01a801-950e-4110-8b01-0b3349005710)
+
+
+
+
+
 
 
