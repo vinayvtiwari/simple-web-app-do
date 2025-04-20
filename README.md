@@ -27,6 +27,10 @@ Containerize & Deploy a static website on DigitalOcean's managed Kubernetes clus
 
  - **Clone this repository locally**
 
+```shell
+git clone https://github.com/vinayvtiwari/simple-web-app-do.git
+```
+output:
  ```shell
  vinayti@osboxes:~$ git clone https://github.com/vinayvtiwari/simple-web-app-do.git
 Cloning into 'simple-web-app-do'...
@@ -82,6 +86,11 @@ Copies index.html, do-kube-image.png, and do-logo.png files from the current dir
 We did not specify the docker file, because the .(dot) at the end means, the Dockerfile is in the current folder. we using the name in the format of **[DOCKER_USERNAME/IMAGE_NAME_YOU_WANT_TO_KEEP]**. It is required because next we will also push it to the dockerhub  so that it can be dowloaded and utilized within the kubernetes environment.
 
 ```shell
+docker build -t vinayti/simple-website-demo .
+```
+
+output:
+```shell
 vinayti@osboxes:/home/vinayti/website-files# docker build -t vinayti/simple-website-demo .
 [+] Building 0.5s (7/7) FINISHED                                                     docker:default
  => [internal] load build definition from Dockerfile                                           0.1s
@@ -102,6 +111,10 @@ vinaytit@osboxes:/home/vinayti/website-files#
 - ** Check whether the image is build using the below docker command**
 
 ```shell
+sudo docker images
+```
+Output:
+```shell
 
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo docker images
 REPOSITORY                    TAG       IMAGE ID       CREATED          SIZE
@@ -112,6 +125,11 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 # Step 02 -  Publishing Your Docker Image to Docker Hub
 - **Authenticate to DockerHub using docker id**
 
+```shell
+docker login -u <dockerhub username>
+```
+
+output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ docker login -u vinayti
 
@@ -132,6 +150,11 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 - **Push the image to the DockerHub repository**
 
 ```shell
+sudo docker push vinayti/simple-website-demo:latest
+```
+
+output:
+```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo docker push vinayti/simple-website-demo:latest
 The push refers to repository [docker.io/vinayti/simple-website-demo]
 a96335b001f0: Mounted from vinayti/simple-website-demo
@@ -146,6 +169,9 @@ latest: digest: sha256:59e17eea6ca66392f78ce0dedf2edaa6ff35e049aca3c699d9bc1c556
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 The image should now be visible in the docker hub under your account. It can now be utilized by anyone on the internet
+
+![image](https://github.com/user-attachments/assets/d9f248ef-8360-4f48-afe8-bd3c6db8183b)
+
 
 # Step 03 - Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)
 
@@ -174,22 +200,39 @@ The image should now be visible in the docker hub under your account. It can now
 - Under the section "Connecting and managing this cluster". make a note of the below command, where the long string at the end is the cluster id. For security reason, i have provided a wrong id. 
 
 ```shell
+doctl kubernetes cluster kubeconfig save <cluster id from the Digital Ocean Control Panel>
+```
+
+output:
+```shell
 doctl kubernetes cluster kubeconfig save 12345678-1234-5678-9012-123456789012
 ```
 ![image](https://github.com/user-attachments/assets/ede40925-3dcb-467d-b44f-a3523396a793)
 
-Kubernetes Cluster is now ready to host your own container images.
+Kubernetes Cluster is now ready to run your own container images.
 
 # Step 04 - Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)
 
 - This step is required to connect the local linux instance to DOs kubernetes cluster. Run the below command.
 
 ```shell
+sudo snap install doctl
+```
+
+output:
+```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap install doctl
 doctl v1.124.0 from DigitalOcean✓ installed
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
+
 - Grant additional permission to doctl to integrate with kubectl.
+
+```shell
+sudo snap connect doctl:kube-config
+```
+
+output:
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ sudo snap connect doctl:kube-config
 vinayti@osboxes:~/simple-web-app-do/website-files$
@@ -213,6 +256,11 @@ vinayti@osboxes:~/simple-web-app-do/website-files$
 - Use the API token to grant doctl access to your DigitalOcean account. Pass in the token string when prompted by doctl auth init, and give this authentication context a name.
 
 ```shell
+doctl auth init
+```
+
+output:
+```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ doctl auth init
 Please authenticate doctl for use with your DigitalOcean account. You can generate a token in the control panel at https://cloud.digitalocean.com/account/api/tokens
 
@@ -226,7 +274,7 @@ vinayvinodtiwari@gmail.com    My Team    10               true              c93d
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
 - To install kubectl , follow the document [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management)
-
+```
 ```shell
 vinayti@osboxes:~/simple-web-app-do/website-files$ curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 sudo chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg # allow unprivileged APT programs to read this keyring
@@ -336,6 +384,94 @@ website-service   LoadBalancer   10.109.13.213   134.199.177.228,2604:a880:400:d
 - Using the Load Balancer IP, you can now browse the Website we deployed on the POD.
 
 ![image](https://github.com/user-attachments/assets/6d01a801-950e-4110-8b01-0b3349005710)
+
+# Step 06 - Monitoring Your Cluster: Installing Metrics Server on DOKS
+
+Kubernetes Metrics Server: It provides essential metrics for Kubernetes clusters, enabling better resource management and scaling decisions. As per the latest Kubernetes Version, it is not a part of the Kubernetes Package. Having said that, we will install it manually. It can also be deployed via definition file. The file is not included in this repo, to make sure, we always get the latest version. 
+
+- Run the below commnad to download the metric server.
+
+```shell
+wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+```
+output:
+```shell
+vinayti@osboxes:~/k8s-files$ wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+--2025-04-20 05:33:08--  https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+Resolving github.com (github.com)... 20.207.73.82
+Connecting to github.com (github.com)|20.207.73.82|:443... connected.
+2025-04-20 05:33:10 (13.4 MB/s) - ‘components.yaml’ saved [4307/4307]
+```
+- Run the below commnad to install the metric server.
+
+```shell
+ kubectl create -f components.yaml
+```
+output:
+```shell
+vinayti@osboxes:~/k8s-files$ kubectl create -f components.yaml
+serviceaccount/metrics-server created
+clusterrole.rbac.authorization.k8s.io/system:aggregated-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/system:metrics-server created
+rolebinding.rbac.authorization.k8s.io/metrics-server-auth-reader created
+clusterrolebinding.rbac.authorization.k8s.io/metrics-server:system:auth-delegator created
+clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server created
+service/metrics-server created
+deployment.apps/metrics-server created
+apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io created
+```
+- In few minutes, we shoud see metrics server capturing the nodes as well as pods metrics.
+
+```shell
+ kubectl top node; kubectl top pods
+```
+output:
+```shell
+vinayti@osboxes:~/k8s-files$ kubectl top nodes
+NAME                CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)
+node-pool01-6hce7   33m          1%       808Mi           26%
+node-pool01-6hcem   45m          2%       756Mi           24%
+vinayti@osboxes:~/k8s-files$
+vinayti@osboxes:~/k8s-files$
+vinayti@osboxes:~/k8s-files$
+vinayti@osboxes:~/k8s-files$ kubectl top pods
+NAME                                 CPU(cores)   MEMORY(bytes)
+website-deployment-847f9949b-c9477   0m           3Mi
+website-deployment-847f9949b-mk8q2   0m           3Mi
+```
+
+# Step 07 - Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
+
+- Horizontal POD Autoscaler: In earlier steps, we talked about replica which spins up the defined number of PODs, however, it is static. In case the load increases or decreases, we cannnot modify the replica count again and again. We need a mechanism, which can look at the current load and accordingly scale up or scale down the number of PODs. This is where HPA comes handy. Horizontal Pod Autoscaling (HPA) automatically scales the number of replicas of a pod based on observed CPU utilization or other custom metrics. Inour example, it gets the metrics from the metric server, we deployed in the last step.
+
+- There is another YAML file in the k8s-files folder web-app-hpa. Lets use it to deploy the (HPA).
+
+```shell
+ kubectl create -f web-app-hpa.yaml
+```
+
+output:
+```shell
+vinayti@osboxes:~/k8s-files$ kubectl create -f web-app-hpa.yaml
+horizontalpodautoscaler.autoscaling/website-hpa created
+```
+
+- lets check the stats of the HPA.
+
+```shell
+ kubectl get hpa
+```
+output:
+```shell
+vinayti@osboxes:~/k8s-files$ kubectl get hpa
+NAME          REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+website-hpa   Deployment/website-deployment   cpu: 0%/50%   2         10        2          18s
+```
+
+
+
+
+
 
 
 
