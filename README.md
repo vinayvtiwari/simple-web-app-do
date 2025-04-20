@@ -15,14 +15,14 @@ Containerize & Deploy a static website on DigitalOcean's managed Kubernetes clus
 
 # Table of Content
 
-01. Static Website Containerization with Docker
-02. Publishing Your Docker Image to Docker Hub
-03. Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)
-04. Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)
-05. Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type
-06. Monitoring Your Cluster: Installing Metrics Server on DOKS
-07. Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
-08. Architechture Diagram Depicting the above configuration
+01. [Static Website Containerization with Docker](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-01---static-website-containerization-with-docker)
+02. [Publishing Your Docker Image to Docker Hub](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-02----publishing-your-docker-image-to-docker-hub)
+03. [Creating a Managed Digital Ocean Kubernetes Cluster(DOKS)](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-03---creating-a-managed-digital-ocean-kubernetes-clusterdoks)
+04. [Install & configure Digital Ocean CLI(DOCTL), API Token & Kubernetes CLI (Kubectl)](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-04---install--configure-digital-ocean-clidoctl-api-token--kubernetes-cli-kubectl)
+05. [Kubernetes Fundamentals: Deploying Pods, ReplicaSets, Declarative definitions, Deployments, and LoadBalancer Service Type](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-05---kubernetes-fundamentals-deploying-pods-replicasets-declarative-definitions-deployments-and-loadbalancer-service-type)
+06. [Monitoring Your Cluster: Installing Metrics Server on DOKS](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-06---monitoring-your-cluster-installing-metrics-server-on-doks)
+07. [Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-07---scaling-your-application-understanding-and-deploying-horizontal-pod-autoscaler-hpa)
+08. [Architechture Diagram Depicting the above configuration](https://github.com/vinayvtiwari/simple-web-app-do/blob/main/README.md#step-08---architechture-diagram-depicting-the-above-configuration)
 
 # Step 01 - Static Website Containerization with Docker
 
