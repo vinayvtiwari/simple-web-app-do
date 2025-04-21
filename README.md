@@ -2,7 +2,7 @@
 # Tutorial: Deploying a Static Website on DigitalOcean Managed Kubernetes Cluster
 
 
-Containerize & Deploy a static website on DigitalOcean's managed Kubernetes cluster. This repository provides a step-by-step tutorial, complete with code examples and configuration files, to help you get started with containerization and Kubernetes.
+Containerize & Deploy a static website on DigitalOcean's Managed Kubernetes cluster. This repository provides a step-by-step tutorial, complete with code examples and configuration files, to help you get started with containerization and Kubernetes on DigitalOcean
 
 # Prerequisite
  - Any Linux virtual machine running Ubuntu.
