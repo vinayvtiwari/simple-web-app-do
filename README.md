@@ -5,10 +5,10 @@
 Containerize & Deploy a static website on DigitalOcean's Managed Kubernetes cluster. This repository provides a step-by-step tutorial, complete with code examples and configuration files, to help you get started with containerization and Kubernetes on DigitalOcean
 
 # Prerequisite
- - Any Linux virtual machine running Ubuntu.
+ - Any Linux virtual machine running Ubuntu connected to internet.
  - Docker installed and running. If not already, refer [here](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
  - DockerHub id. if not already, please refer [here](https://docs.docker.com/accounts/create-account/)
- - git client installed
+ - git client to clone the repository.
  - static website files. Feel free to use to sample in this repo [website-files](https://github.com/vinayvtiwari/simple-web-app-do/tree/main/website-files)
  - DigitalOcean login id with relevant permissions.
 
@@ -48,7 +48,7 @@ k8s-files  LICENSE  README.md  website-files
 vinayti@osboxes:~/simple-web-app-do$
 
 ```
-- **CD into the website-files directory and examine the content.**
+- **cd into the website-files directory and examine the content.**
 
 ```shell
 vinayti@osboxes:~/simple-web-app-do$ cd website-files/
@@ -60,7 +60,7 @@ total 140
 -rw-rw-r-- 1 vinayti vinayti   3839 Apr 20 10:27 index.html
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
-Except Dockerfile , all the remaining files are website related which is what we want to dockerize. Lets understand it first.
+Except Dockerfile , all the remaining files are website used to serve static content. Lets understand Dockerfile.
 
 Dockerfile --> A Dockerfile is a text file that contains instructions for building a Docker image. It's a blueprint for creating a Docker image, specifying  the base image, dependencies, and commands to run.
 
@@ -80,11 +80,11 @@ Tells us to use nginx as a base image. It will be downloaded from DockerHub. Its
 ```shell 
 COPY index.html do-kube-image.png do-logo.png /usr/share/nginx/html
 ```
-Copies index.html, do-kube-image.png, and do-logo.png files from the current directory (on the ubuntu machine) into the Docker image
+Copies index.html, do-kube-image.png and do-logo.png files from the current directory (on the ubuntu machine) into the Docker image
 
 
 - **Building our own image**  
-We did not specify the docker file, because the .(dot) at the end means, the Dockerfile is in the current folder. we using the name in the format of **[DOCKER_USERNAME/IMAGE_NAME_YOU_WANT_TO_KEEP]**. It is required because next we will also push it to the dockerhub  so that it can be dowloaded and utilized within the kubernetes environment.
+Docker build command is used to build the image. To tag the image We use -t. We did not specify the docker file, because the .(dot) at the end means, the Dockerfile is in the current folder. we using the name in the format of **[DOCKERHUB_USERNAME/IMAGE_NAME_YOU_WANT_TO_KEEP]**. It is required because next we will also push it to the dockerhub  so that it can be dowloaded and utilized within the kubernetes environment.
 
 ```shell
 docker build -t vinayti/simple-website-demo .
@@ -169,7 +169,7 @@ ea680fbff095: Mounted from vinayti/simple-website-demo
 latest: digest: sha256:59e17eea6ca66392f78ce0dedf2edaa6ff35e049aca3c699d9bc1c5566ded450 size: 1988
 vinayti@osboxes:~/simple-web-app-do/website-files$
 ```
-The image should now be visible in the docker hub under your account. It can now be utilized by anyone on the internet
+The image should now be visible in the docker hub under your account. As the access level is public, it can now be utilized by anyone.
 
 ![image](https://github.com/user-attachments/assets/d9f248ef-8360-4f48-afe8-bd3c6db8183b)
 
@@ -186,7 +186,7 @@ The image should now be visible in the docker hub under your account. It can now
 
   ![image](https://github.com/user-attachments/assets/726e0271-49b4-4648-b0ee-d0c7bc225252)
 
-- Under Cluster Capacity, Provide a Node pool name and change number of Nodes to 2. There is "Set Node Pool to Autoscale" which will increase the number on Nodes, based on utilization. There is also a high avaialbility option for controlplane, which will run control plane components in HA mode. Because this is not production we will keep them unchecked.
+- Under Cluster Capacity, Provide a Node pool name and change number of Nodes to 2. There is "Set Node Pool to Autoscale" which will increase the number on Nodes, based on utilization. There is also a high avaialbility option for controlplane, which will run control plane components in HA mode. Because this is not production we will it unchecked.
 
   ![image](https://github.com/user-attachments/assets/51660cce-cd07-4fcb-a926-86cc25b1c61d)
 
@@ -354,7 +354,8 @@ vinayti@osboxes:~/simple-web-app-do/k8s-files$ ls
 web-app-deployment.yml  web-app-hpa.yml  web-app-service.yml
 vinayti@osboxes:~/simple-web-app-do/k8s-files$
 ```
-These files are very well commented for anyone to understand the meaning of the lines. Lets use the kubectl create commands to deploy the resources.  In the below output, we can see that the PODs are deployed on seperate nodes. Kubernetes has a component called scheduler which takes care of the placement of the nodes, making sure they are placed on different nodes for resiliency. The count is 2, because in th file web-app-deployment.yaml, we have defined replica setting at 2.
+These files are very well commented for anyone to understand the meaning of the lines. Lets use the kubectl create commands to deploy the resources.  
+In the below output, we can see that the PODs are deployed on seperate nodes. Kubernetes has a component called scheduler which takes care of the placement of the nodes, making sure they are placed on different nodes for resiliency. The count is 2, because in the file web-app-deployment.yaml, we have defined replica setting at 2.
 
 ```shell
 kubectl create -f web-app-deployment.yaml
@@ -373,7 +374,7 @@ website-deployment-847f9949b-mk8q2   1/1     Running   0          87s   10.108.0
 
 vinayti@osboxes:~/k8s-files$
 ```
-As the PODs are running, lets now make it public facing by deploying a load balancer service. In the below output, we are asking DigitalOcean to deploy a load balancer. This load balancer will serve the application running on PODs to the outside world. If you notice, the External IP section for the LoadBalancer Service type is pending. It will appear once the load balancer is deployed within the DigitalOcean Account. 
+As the PODs are running, lets now make it public facing by deploying a load balancer service. In the below output, we are asking DigitalOcean to deploy a load balancer. This load balancer will serve the application running on PODs to the outside world.After running the command, if you notice, the External IP section for the LoadBalancer Service type is pending. It will appear once the load balancer is deployed within the DigitalOcean Account. 
 
 ```shell
 kubectl create -f web-app-service.yml
@@ -460,7 +461,7 @@ website-deployment-847f9949b-mk8q2   0m           3Mi
 
 # Step 07 - Scaling Your Application: Understanding and Deploying Horizontal Pod Autoscaler (HPA)
 
-Horizontal POD Autoscaler: In earlier steps, we talked about replica which spins up the defined number of PODs, however, it is static. In case the load increases or decreases, we cannnot modify the replica count again and again. We need a mechanism, which can look at the current load and accordingly scale up or scale down the number of PODs. This is where HPA comes handy. Horizontal Pod Autoscaling (HPA) automatically scales the number of replicas of a pod based on observed CPU utilization or other custom metrics. Inour example, it gets the metrics from the metric server, we deployed in the last step.
+Horizontal POD Autoscaler: In earlier steps, we talked about replica which spins up the defined number of PODs, however, it is static. In case the load increases or decreases, we cannnot modify the replica count manually. We need a mechanism, which can look at the current load and accordingly scale up or scale down the number of PODs. This is where HPA comes handy. Horizontal Pod Autoscaling (HPA) automatically scales the number of replicas of a pod based on observed CPU utilization or other custom metrics. In our example, it gets the metrics from the metric server, we deployed in the last step.
 
 - **There is another YAML file in the k8s-files folder web-app-hpa. Lets use it to deploy the (HPA).**
 
